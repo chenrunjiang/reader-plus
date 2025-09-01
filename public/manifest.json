@@ -1,0 +1,37 @@
+{
+  "name": "阅+ - 优雅的EPUB阅读器",
+  "short_name": "阅+",
+  "description": "现代化的EPUB电子书阅读器，支持离线阅读和书籍管理",
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "portrait-primary",
+  "theme_color": "#667eea",
+  "background_color": "#f8fafc",
+  "scope": ".",
+  "categories": ["books", "education", "productivity"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Ccircle cx='96' cy='96' r='96' fill='%23667eea'/%3E%3Cpath d='M72 60h48c4 0 8 4 8 8v56c0 4-4 8-8 8H72c-4 0-8-4-8-8V68c0-4 4-8 8-8z' fill='white'/%3E%3Ctext x='96' y='110' text-anchor='middle' fill='%23667eea' font-size='40' font-family='serif'%3E阅%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23667eea'/%3E%3Cpath d='M192 160h128c11 0 20 9 20 20v152c0 11-9 20-20 20H192c-11 0-20-9-20-20V180c0-11 9-20 20-20z' fill='white'/%3E%3Ctext x='256' y='290' text-anchor='middle' fill='%23667eea' font-size='100' font-family='serif'%3E阅%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "上传新书",
+      "short_name": "上传",
+      "description": "快速上传EPUB书籍",
+      "url": "/?action=upload"
+    }
+  ]
+}
