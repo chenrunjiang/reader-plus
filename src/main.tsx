@@ -29,48 +29,6 @@ const styleElement = document.createElement('style');
 styleElement.textContent = globalStyles;
 document.head.appendChild(styleElement);
 
-// PWA Service Worker 注册
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then((registration) => {
-        console.log('✅ PWA: Service Worker registered successfully', registration.scope);
-        
-        // 检查更新
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // 新版本可用
-                console.log('🆕 PWA: New version available');
-                // 这里可以显示更新提示
-                if (confirm('发现新版本，是否立即更新？')) {
-                  newWorker.postMessage({ type: 'SKIP_WAITING' });
-                  window.location.reload();
-                }
-              }
-            });
-          }
-        });
-      })
-      .catch((error) => {
-        console.error('❌ PWA: Service Worker registration failed', error);
-      });
-    
-    // 监听Service Worker控制权变化
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('🔄 PWA: Service Worker controller changed');
-      window.location.reload();
-    });
-  });
-}
-
-// PWA基础支持（简化版）
-window.addEventListener('appinstalled', () => {
-  console.log('🎉 PWA: 应用已安装');
-});
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
