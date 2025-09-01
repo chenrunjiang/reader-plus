@@ -4,7 +4,7 @@
   "description": "现代化的EPUB电子书阅读器，支持离线阅读和书籍管理",
   "start_url": ".",
   "display": "fullscreen",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "theme_color": "#667eea",
   "background_color": "#f8fafc",
   "scope": ".",

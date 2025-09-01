@@ -619,7 +619,7 @@ const AIPanel: React.FC<AIPanelProps> = ({
         borderTop: isWide ? 'none' : '1px solid',
         borderColor: 'divider',
         width: isWide ? '50%' : '100%',
-        height: isWide ? '100vh' : '40vh',
+        height: isWide ? '100vh' : '50vh',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
@@ -783,7 +783,7 @@ const AIPanel: React.FC<AIPanelProps> = ({
             )}
 
             {/* 当前页提示词输入与更新 */}
-            <Box sx={{ display: 'flex', flexDirection: isWide ? 'row' : 'column', alignItems: isWide ? 'center' : 'stretch', gap: 1, mt: 1, borderTop: '1px solid', borderColor: 'divider', pt: 1 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1, mt: 1, borderTop: '1px solid', borderColor: 'divider', pt: 1 }}>
               <TextField
                 fullWidth
                 size="small"
@@ -801,7 +801,6 @@ const AIPanel: React.FC<AIPanelProps> = ({
                   await generateSummary(res.content, pagePromptDraft);
                 }}
                 disabled={isLoading || isExtractingContent}
-                fullWidth={!isWide}
                 sx={{
                   whiteSpace: 'nowrap',
                   px: 2,

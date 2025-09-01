@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import localforage from 'localforage';
 import { ThemeProvider } from '@mui/material/styles';
@@ -155,7 +155,22 @@ function Reader() {
   // 更宽松的平板识别：md 断点 或 横屏且宽度 ≥ 768px
   const isMdUp = useMediaQuery(muiTheme.breakpoints.up('md'));
   const isTabletLandscape = useMediaQuery('(orientation: landscape) and (min-width: 600px)');
-  const isWide = isMdUp || isTabletLandscape;
+  // 基于实际容器宽度的兜底判断，解决 PWA 安装模式在部分设备上的媒体查询不一致
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const [measuredWide, setMeasuredWide] = useState<boolean>(false);
+  useEffect(() => {
+    const el = rootRef.current || document.getElementById('reader-root');
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        setMeasuredWide(width >= 600);
+      }
+    });
+    observer.observe(el as Element);
+    return () => observer.disconnect();
+  }, []);
+  const isWide = isMdUp || isTabletLandscape || measuredWide;
 
   const readerStyles = useMemo(() => {
     const p = muiTheme.palette;
@@ -314,7 +329,7 @@ function Reader() {
             outline: 'none',
           },
         }} />
-        <Box id="reader-root" sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Box id="reader-root" ref={rootRef} sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
         <AppBar position="fixed" color="transparent" elevation={0} sx={{ display: showAppBar ? 'block' : 'none' }}>
           <Toolbar sx={{ py: 1 }}>
             <IconButton 
