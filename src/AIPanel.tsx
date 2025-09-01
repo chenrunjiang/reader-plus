@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Close as CloseIcon, AutoAwesome as AutoAwesomeIcon, Refresh as RefreshIcon } from '@mui/icons-material';
+import { Close as CloseIcon, AutoAwesome as AutoAwesomeIcon, Refresh as RefreshIcon, SwapHoriz as SwapHorizIcon, SwapVert as SwapVertIcon } from '@mui/icons-material';
 import { aiStorage, readerStorage } from './storage';
 import localforage from 'localforage';
 
@@ -100,6 +100,9 @@ const AIPanel: React.FC<AIPanelProps> = ({
   // 当前页提示词：草稿与已提交版本（不做缓存，翻页清空）
   const [pagePromptDraft, setPagePromptDraft] = useState<string>('');
   const [pagePromptSaved, setPagePromptSaved] = useState<string>('');
+  // 布局方向本地状态（用于边框方向控制）
+  const [layoutWideReverse, setLayoutWideReverse] = useState<boolean>(() => readerStorage.getLayoutWideReverse());
+  const [layoutMobileReverse, setLayoutMobileReverse] = useState<boolean>(() => readerStorage.getLayoutMobileReverse());
 
   // 自动滚动到底部的函数
   const scrollToBottom = () => {
@@ -123,6 +126,8 @@ const AIPanel: React.FC<AIPanelProps> = ({
       const d = e?.detail || {};
       if (typeof d.fontSize === 'number') setReaderFontSize(Math.min(28, Math.max(12, d.fontSize)));
       if (typeof d.fontFamily === 'string') setReaderFontFamily(d.fontFamily);
+      if (typeof d.layoutWideReverse === 'boolean') setLayoutWideReverse(d.layoutWideReverse);
+      if (typeof d.layoutMobileReverse === 'boolean') setLayoutMobileReverse(d.layoutMobileReverse);
     };
     window.addEventListener('readerStyleChanged', onStyleChanged as EventListener);
     return () => window.removeEventListener('readerStyleChanged', onStyleChanged as EventListener);
@@ -615,8 +620,10 @@ const AIPanel: React.FC<AIPanelProps> = ({
     <Box
       sx={{
         bgcolor: 'background.paper',
-        borderLeft: isWide ? '1px solid' : 'none',
-        borderTop: isWide ? 'none' : '1px solid',
+        borderLeft: isWide && !layoutWideReverse ? '1px solid' : 'none',
+        borderRight: isWide && layoutWideReverse ? '1px solid' : 'none',
+        borderTop: !isWide && !layoutMobileReverse ? '1px solid' : 'none',
+        borderBottom: !isWide && layoutMobileReverse ? '1px solid' : 'none',
         borderColor: 'divider',
         width: isWide ? '50%' : '100%',
         height: isWide ? '100vh' : '50vh',
@@ -643,6 +650,33 @@ const AIPanel: React.FC<AIPanelProps> = ({
         </Box>
         
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* 布局切换：手机上下 / 平板左右 */}
+          <IconButton
+            onClick={() => {
+              try {
+                if (isWide) {
+                  const next = !readerStorage.getLayoutWideReverse();
+                  readerStorage.setLayoutWideReverse(next);
+                  readerStorage.emitStyleChange({ layoutWideReverse: next });
+                } else {
+                  const next = !readerStorage.getLayoutMobileReverse();
+                  readerStorage.setLayoutMobileReverse(next);
+                  readerStorage.emitStyleChange({ layoutMobileReverse: next });
+                }
+              } catch {}
+            }}
+            sx={{
+              color: 'text.primary',
+              bgcolor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'divider',
+              '&:hover': { bgcolor: 'action.hover' }
+            }}
+            aria-label="切换布局方向"
+            title={isWide ? '切换左右布局' : '切换上下布局'}
+          >
+            {isWide ? <SwapHorizIcon /> : <SwapVertIcon />}
+          </IconButton>
           {/* 关闭按钮 */}
           <IconButton
             onClick={onClose}
@@ -793,7 +827,7 @@ const AIPanel: React.FC<AIPanelProps> = ({
                 sx={{ flex: 1 }}
               />
               <Button
-                variant="contained"
+                variant="outlined"
                 size="small"
                 onClick={async () => {
                   const res = await extractPageContent();
@@ -802,20 +836,10 @@ const AIPanel: React.FC<AIPanelProps> = ({
                 }}
                 disabled={isLoading || isExtractingContent}
                 sx={{
-                  whiteSpace: 'nowrap',
+                  height: 40,
                   px: 2,
-                  flexShrink: 0,
                   minWidth: 72,
-                  bgcolor: 'common.white',
-                  color: 'text.primary',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  boxShadow: 'none',
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                    boxShadow: 'none'
-                  },
-                  '&:disabled': { opacity: 0.6 }
+                  whiteSpace: 'nowrap'
                 }}
               >
                 更新

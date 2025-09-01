@@ -12,6 +12,8 @@ export const STORAGE_KEYS = {
   READER_FONT_FAMILY: 'reader:fontFamily',
   READER_LINE_HEIGHT: 'reader:lineHeight',
   READER_SHOW_AI: 'reader:showAI',
+  READER_LAYOUT_WIDE_REVERSE: 'reader:layoutWideReverse',
+  READER_LAYOUT_MOBILE_REVERSE: 'reader:layoutMobileReverse',
   
   // AI配置
   AI_API_KEY: 'ai:apiKey',
@@ -46,6 +48,8 @@ export interface ReaderConfig {
   fontFamily: string;
   lineHeight: number;
   showAI: boolean;
+  layoutWideReverse: boolean;
+  layoutMobileReverse: boolean;
 }
 
 /**
@@ -145,6 +149,22 @@ export const readerStorage = {
   setLineHeight(lineHeight: number): void {
     storage.setItem(STORAGE_KEYS.READER_LINE_HEIGHT, String(lineHeight));
   },
+
+  getLayoutWideReverse(): boolean {
+    return storage.getItem(STORAGE_KEYS.READER_LAYOUT_WIDE_REVERSE, '0') === '1';
+  },
+
+  setLayoutWideReverse(v: boolean): void {
+    storage.setItem(STORAGE_KEYS.READER_LAYOUT_WIDE_REVERSE, v ? '1' : '0');
+  },
+
+  getLayoutMobileReverse(): boolean {
+    return storage.getItem(STORAGE_KEYS.READER_LAYOUT_MOBILE_REVERSE, '0') === '1';
+  },
+
+  setLayoutMobileReverse(v: boolean): void {
+    storage.setItem(STORAGE_KEYS.READER_LAYOUT_MOBILE_REVERSE, v ? '1' : '0');
+  },
   
   getShowAI(): boolean {
     const value = storage.getItem(STORAGE_KEYS.READER_SHOW_AI);
@@ -162,13 +182,15 @@ export const readerStorage = {
       fontFamily: this.getFontFamily(),
       lineHeight: this.getLineHeight(),
       showAI: this.getShowAI(),
+      layoutWideReverse: this.getLayoutWideReverse(),
+      layoutMobileReverse: this.getLayoutMobileReverse(),
     };
   },
   
   /**
    * 触发阅读器样式变更事件
    */
-  emitStyleChange(config: { fontSize?: number; fontFamily?: string; lineHeight?: number }): void {
+  emitStyleChange(config: { fontSize?: number; fontFamily?: string; lineHeight?: number; layoutWideReverse?: boolean; layoutMobileReverse?: boolean }): void {
     const event = new CustomEvent('readerStyleChanged', { detail: config });
     window.dispatchEvent(event);
   }

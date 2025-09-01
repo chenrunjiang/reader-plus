@@ -66,6 +66,8 @@ function Reader() {
   const [tocItems, setTocItems] = useState<any[]>([]);
   const [showAI, setShowAI] = useState<boolean>(() => readerStorage.getShowAI());
   const [lineHeight, setLineHeight] = useState<number>(() => readerStorage.getLineHeight());
+  const [layoutWideReverse, setLayoutWideReverse] = useState<boolean>(() => readerStorage.getLayoutWideReverse());
+  const [layoutMobileReverse, setLayoutMobileReverse] = useState<boolean>(() => readerStorage.getLayoutMobileReverse());
 
   useEffect(() => {
     // 主题初始化在state中已完成，这里不需要再次读取
@@ -89,6 +91,8 @@ function Reader() {
       if (typeof d.fontSize === 'number') setFontSize(Math.min(28, Math.max(12, d.fontSize)));
       if (typeof d.fontFamily === 'string') setFontFamily(d.fontFamily);
       if (typeof d.lineHeight === 'number') setLineHeight(Math.min(2.4, Math.max(1.2, d.lineHeight)));
+      if (typeof d.layoutWideReverse === 'boolean') setLayoutWideReverse(d.layoutWideReverse);
+      if (typeof d.layoutMobileReverse === 'boolean') setLayoutMobileReverse(d.layoutMobileReverse);
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -183,7 +187,7 @@ function Reader() {
       },
       readerArea: {
         ...ReactReaderStyle.readerArea,
-        backgroundColor: p.background.default,
+        backgroundColor: p.mode === 'dark' ? p.background.paper : p.background.default,
       },
       reader: {
         ...ReactReaderStyle.reader,
@@ -329,7 +333,7 @@ function Reader() {
             outline: 'none',
           },
         }} />
-        <Box id="reader-root" ref={rootRef} sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Box id="reader-root" ref={rootRef} sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: muiTheme.palette.mode === 'dark' ? 'background.paper' : 'background.default' }}>
         <AppBar position="fixed" color="transparent" elevation={0} sx={{ display: showAppBar ? 'block' : 'none' }}>
           <Toolbar sx={{ py: 1 }}>
             <IconButton 
@@ -462,7 +466,7 @@ function Reader() {
               flex: 1,
               width: '100%',
               display: 'flex',
-              flexDirection: isWide ? 'row' : 'column',
+              flexDirection: isWide ? (layoutWideReverse ? 'row-reverse' : 'row') : (layoutMobileReverse ? 'column-reverse' : 'column'),
               gap: 1,
               minHeight: '100vh',
             }}>
