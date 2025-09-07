@@ -318,6 +318,20 @@ function Reader() {
     return () => window.cancelAnimationFrame(rafId);
   }, [showAppBar, tocOpen, showAI, rendition]);
 
+  // 根据是否启用 AI 面板与窗口宽度，切换单/双页模式
+  useEffect(() => {
+    if (!rendition) return;
+    try {
+      if (showAI) {
+        // 启用 AI 面板时，始终单页
+        (rendition as any).spread('none');
+      } else {
+        // 未启用 AI 面板时，根据 isWide 决定是否双页
+        (rendition as any).spread(isWide ? 'both' : 'none');
+      }
+    } catch {}
+  }, [rendition, showAI, isWide]);
+
   return (
     <ThemeProvider theme={muiTheme}>
       <>

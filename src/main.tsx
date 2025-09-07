@@ -5,7 +5,7 @@ import App from './App'
 import Settings from './Settings'
 import Reader from './Reader'
 
-// 全局样式重置
+// 全局样式重置（禁用下拉刷新）
 const globalStyles = `
   * {
     box-sizing: border-box;
@@ -16,11 +16,15 @@ const globalStyles = `
     padding: 0;
     height: 100%;
     width: 100%;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
   
   #root {
     height: 100vh;
     width: 100%;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
   }
 `;
 
